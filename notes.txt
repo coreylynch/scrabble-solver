@@ -1,0 +1,10 @@
+I chose to implement the scrabble solver + 
+
+1. Allow user to specify blank tiles as part of their rack
+2. Support a user-supplied word list
+3. My own feature, which I chose to be: "allow user to supply a pattern match all solutions against"
+
+TODO:
+- The permutation code in the solve function might be able to be factored out into a separate function
+- pattern matching currently takes regular expressions as an input. It might be more user friendly to
+create some sort of DSL that gets translated into appropriate regexes.
