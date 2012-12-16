@@ -1,6 +1,15 @@
+"""
+Author: Corey Lynch
+Date: 12/16/2012
+
+Usage:
+python scrabble.py WORD_RACK [optional path to custom wordlist]
+"""
+
 import itertools
 import operator
 import sys
+import os
 
 scores = {"a": 1, "c": 3, "b": 3, "e": 1, "d": 2, "g": 2,
           "f": 4, "i": 1, "h": 4, "k": 5, "j": 8, "m": 3,
@@ -8,14 +17,19 @@ scores = {"a": 1, "c": 3, "b": 3, "e": 1, "d": 2, "g": 2,
           "r": 1, "u": 1, "t": 1, "w": 4, "v": 4, "y": 4,
           "x": 8, "z": 10}
 
+alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 with open('sowpods.txt') as f:
 	valid_words = set(i.strip() for i in f)
-
-alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 def main():
 	all_scores = {}
 	rack = sys.argv[1]
+	if len(sys.argv) > 2:
+		custom_wordlist_path = sys.argv[2]
+		if os.path.isfile(custom_wordlist_path):
+			with open(custom_wordlist_path) as f:
+				valid_words = set(i.strip() for i in f)
 	if '_' in rack:
 		blank_count = rack.count('_')
 		rack = rack.replace('_','')
