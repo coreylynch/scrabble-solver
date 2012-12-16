@@ -10,6 +10,8 @@ import itertools
 import operator
 import sys
 import os
+import re
+from optparse import OptionParser
 
 scores = {"a": 1, "c": 3, "b": 3, "e": 1, "d": 2, "g": 2,
           "f": 4, "i": 1, "h": 4, "k": 5, "j": 8, "m": 3,
@@ -19,17 +21,10 @@ scores = {"a": 1, "c": 3, "b": 3, "e": 1, "d": 2, "g": 2,
 
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-def main():
+def solve(rack, valid_words, pattern=None):
+	if pattern is None:
+		pattern = ""
 	all_scores = {}
-	rack = sys.argv[1]
-	if len(sys.argv) > 2:
-		custom_wordlist_path = sys.argv[2]
-		if os.path.isfile(custom_wordlist_path):
-			with open(custom_wordlist_path) as f:
-				valid_words = set(i.strip() for i in f)
-	else:
-		with open('sowpods.txt') as f:
-			valid_words = set(i.strip() for i in f)
 	if '_' in rack:
 		blank_count = rack.count('_')
 		rack = rack.replace('_','')
@@ -37,7 +32,7 @@ def main():
 			for perm_size in range(2,len(rack)+blank_count+1):
 				for perm in itertools.permutations(rack+letter, perm_size):
 					word = ''.join(letter for letter in perm)
-					if word in valid_words:
+					if word in valid_words and re.search(pattern, word):	
 						score = sum([scores[i.lower()] for i in word])
 						if score - scores[letter.lower()] > 0:
 							all_scores[word] = score - scores[letter.lower()]
@@ -45,7 +40,7 @@ def main():
 		for perm_size in range(2,len(rack)+1):
 			for perm in itertools.permutations(rack,perm_size):
 				word = ''.join(letter for letter in perm)
-			 	if word in valid_words:
+			 	if word in valid_words and re.search(pattern,word):
 			 		score = sum([scores[i.lower()] for i in word])
 			 		all_scores[word] = score
 	
@@ -54,4 +49,20 @@ def main():
 		print("%d %s" % (i[1], i[0]))
 
 if __name__=='__main__':
-	main()
+	parser = OptionParser()
+	parser.add_option("-w", "--wordlist",
+                      action="store",
+                      dest="custom_wordlist_path",
+                      default='sowpods.txt',
+                      help="use a custom word list")
+	parser.add_option("-p", "--pattern",
+    	              action="store",
+                      dest="pattern",
+                      default=None,
+                      help="pattern to match",)
+	(opts, args) = parser.parse_args()
+	custom_wordlist_path = opts.custom_wordlist_path
+	with open(custom_wordlist_path) as f:
+		valid_words = set(i.strip() for i in f)
+	rack = sys.argv[1]
+	solve(rack, valid_words, opts.pattern)
