@@ -3,7 +3,9 @@ Author: Corey Lynch
 Date: 12/16/2012
 
 Usage:
-python scrabble.py WORD_RACK [optional path to custom wordlist]
+python scrabble.py WORD_RACK -w [optional path to custom wordlist] -p 
+[optional pattern to match against, e.g. '/AA' to force solutions to start
+with 'A']
 """
 
 import itertools
@@ -44,7 +46,8 @@ def solve(rack, valid_words, pattern=None):
 			 		score = sum([scores[i.lower()] for i in word])
 			 		all_scores[word] = score
 	
-	sorted_scores = sorted(all_scores.iteritems(), key=operator.itemgetter(1), reverse=True)
+	sorted_scores = sorted(all_scores.iteritems(), key=operator.itemgetter(1),
+						   reverse=True)
 	for i in sorted_scores:
 		print("%d %s" % (i[1], i[0]))
 
