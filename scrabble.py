@@ -11,15 +11,29 @@ scores = {"a": 1, "c": 3, "b": 3, "e": 1, "d": 2, "g": 2,
 with open('sowpods.txt') as f:
 	valid_words = set(i.strip() for i in f)
 
+alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 def main():
 	all_scores = {}
 	rack = sys.argv[1]
-	for i in range(2,len(rack)+1):
-		for j in itertools.permutations(rack,i):
-			word = ''.join(letter for letter in j)
-		 	if word in valid_words:
-		 		score = sum([scores[i.lower()] for i in word])
-		 		all_scores[word] = score
+	if '_' in rack:
+		blank_count = rack.count('_')
+		rack = rack.replace('_','')
+		for letter in alphabet:
+			for perm_size in range(2,len(rack)+blank_count+1):
+				for perm in itertools.permutations(rack+letter, perm_size):
+					word = ''.join(letter for letter in perm)
+					if word in valid_words:
+						score = sum([scores[i.lower()] for i in word])
+						if score - scores[letter.lower()] > 0:
+							all_scores[word] = score - scores[letter.lower()]
+	else:
+		for perm_size in range(2,len(rack)+1):
+			for perm in itertools.permutations(rack,perm_size):
+				word = ''.join(letter for letter in perm)
+			 	if word in valid_words:
+			 		score = sum([scores[i.lower()] for i in word])
+			 		all_scores[word] = score
 	
 	sorted_scores = sorted(all_scores.iteritems(), key=operator.itemgetter(1), reverse=True)
 	for i in sorted_scores:
