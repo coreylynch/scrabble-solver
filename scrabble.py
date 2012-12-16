@@ -19,9 +19,6 @@ scores = {"a": 1, "c": 3, "b": 3, "e": 1, "d": 2, "g": 2,
 
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-with open('sowpods.txt') as f:
-	valid_words = set(i.strip() for i in f)
-
 def main():
 	all_scores = {}
 	rack = sys.argv[1]
@@ -30,6 +27,9 @@ def main():
 		if os.path.isfile(custom_wordlist_path):
 			with open(custom_wordlist_path) as f:
 				valid_words = set(i.strip() for i in f)
+	else:
+		with open('sowpods.txt') as f:
+			valid_words = set(i.strip() for i in f)
 	if '_' in rack:
 		blank_count = rack.count('_')
 		rack = rack.replace('_','')
